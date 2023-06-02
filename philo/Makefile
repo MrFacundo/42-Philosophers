@@ -2,7 +2,7 @@ NAME 			= philo
 SOURCES 		= $(shell echo srcs/*.c)
 OBJECTS 		= $(SOURCES:.c=.o)
 CC 				= gcc
-CFLAGS_PROD 	= -g -Wall -Wextra -Werror -O3
+CFLAGS_PROD 	= -g -pthread -Wall -Wextra -Werror -O3
 
 # --- COLORS ---
 
@@ -17,7 +17,7 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS) 
 		@echo  "$(GRAY)----Compiling $(NAME)----$(NONE)"
-		$(CC) -o $@ $(OBJECTS)
+		$(CC) $(CFLAGS_PROD) -o $@ $(OBJECTS)
 		@echo "$(GREEN)$(NAME) Compiled! ᕦ(♥_♥)ᕤ$(NONE)\n"
 
 .c.o:	%.o : %.c
