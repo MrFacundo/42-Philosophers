@@ -40,9 +40,9 @@ show:
 valgrind: all
 		 valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s ./so_long maps/map_4.ber
 
-rs:		 all
-		
-
 re: fclean all
 
-.PHONY: all clean fclean re show valgrind
+rs:		 re
+		./philo
+
+.PHONY: all clean fclean re rs show valgrind
