@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:51 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/09 16:31:26 by facundo          ###   ########.fr       */
+/*   Updated: 2023/06/12 15:15:46 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,12 @@
 typedef struct philosophers
 {
 	int				id;
-	int				servings;
+	pthread_t		lifecycle;
+	pthread_t		monitoring;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*someone_died_mutex;
+	int				servings;
 	int				phil_amount;
 	int				*someone_died;
 	struct timeval	start_time;
@@ -48,6 +51,7 @@ typedef struct global_data
 {
 	int				phil_amount;
 	int				someone_died;
+	pthread_mutex_t	someone_died_mutex;
 	t_philosopher	*philosophers;
 	pthread_mutex_t	*forks;
 	long			total_elapsed_t;
@@ -58,6 +62,33 @@ typedef struct global_data
 	int				servings;
 }	t_global_data;
 
-int	ft_atoi(const char *nptr);
+//debug
+void	print_results(t_global_data *global_data);
+
+//libft
+int		ft_atoi(const char *nptr);
+
+//main
+void	*check_starvation(void *arg);
+void	*routine(void *arg);
+
+//init
+void	init_philosophers(t_global_data *global_data);
+int		initialize_global_data(t_global_data *global_data, int argc, char **argv);
+
+//subroutines
+void	assign_forks(t_philosopher *phil, pthread_mutex_t **left_fork, pthread_mutex_t **right_fork);
+void	eat(t_philosopher *phil, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
+void	leave_forks(t_philosopher *phil, pthread_mutex_t *left_fork, pthread_mutex_t *right_fork);
+void	nap(t_philosopher *phil);
+
+//utils
+void	update_elapsed_total_time(t_philosopher *phil);
+long	get_timestamp(t_philosopher *phil);
+void	update_elapsed_last_serving_time(t_philosopher *phil);
+int		pthread_helper(t_global_data *global_data, void*f);
+int		check_someone_died(t_philosopher *phil);
+
+
 
 # endif
