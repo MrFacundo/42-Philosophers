@@ -2,7 +2,7 @@ NAME 			= philo
 SOURCES 		= $(shell echo srcs/*.c)
 OBJECTS 		= $(SOURCES:.c=.o)
 CC 				= gcc
-CFLAGS_PROD 	= -g -pthread -Wall -Wextra -Werror -O3
+CFLAGS 			= -g -pthread -Wall -Wextra -Werror -O3 -fsanitize=thread
 
 # --- COLORS ---
 
@@ -17,7 +17,7 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS) 
 		@echo  "$(GRAY)----Compiling $(NAME)----$(NONE)"
-		$(CC) $(CFLAGS_PROD) -o $@ $(OBJECTS)
+		$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 		@echo "$(GREEN)$(NAME) Compiled! ᕦ(♥_♥)ᕤ$(NONE)\n"
 
 .c.o:	%.o : %.c
@@ -34,7 +34,7 @@ fclean:	clean
 show:
 		@printf "NAME	: $(NAME)\n"
 		@printf "CC	: $(CC)\n"
-		@printf "CFLAGS	: $(CFLAGS_PROD)\n"
+		@printf "CFLAGS	: $(CFLAGS)\n"
 		@printf "SOURCES	: $(SOURCES)\n"
 
 valgrind: all

@@ -6,34 +6,39 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:14:44 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/12 16:19:07 by facundo          ###   ########.fr       */
+/*   Updated: 2023/06/19 15:27:29 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-void update_elapsed_total_time(t_philosopher *phil)
+void	print_status(t_philosopher *ph, char *status)
 {
-	struct timeval current_time;
+	long	timestamp;
 
-	gettimeofday(&current_time, NULL);
-	*(phil->total_elapsed_t) = (current_time.tv_sec - phil->start_time.tv_sec) * 1000L +
-							   (current_time.tv_usec - phil->start_time.tv_usec) / 1000L;
+	timestamp = get_time() - ph->g_data->start_time;
+	if ((ph->is_dead && !ft_strncmp(status, "died", 5)) || !check_someone_died(ph))
+		printf("%ld %d %s\n", timestamp, ph->id, status);
 }
 
-void update_elapsed_last_serving_time(t_philosopher *phil)
+void	ft_usleep(long time_in_ms)
 {
-	struct timeval current_time;
+	long	start_time;
 
-	gettimeofday(&current_time, NULL);
-	phil->elapsed_last_serving_t = (current_time.tv_sec - phil->last_serving_t.tv_sec) * 1000L +
-								   (current_time.tv_usec - phil->last_serving_t.tv_usec) / 1000L;
-
+	start_time = 0;
+	start_time = get_time();
+	while ((get_time() - start_time) < time_in_ms)
+		usleep(time_in_ms / 10);
 }
-long get_timestamp(t_philosopher *phil)
+
+long	get_time(void)
 {
-	update_elapsed_total_time(phil);
-	return (*(phil->total_elapsed_t));
+	long			timestamp;
+	struct timeval	current_time;
+
+	gettimeofday(&current_time, 0);
+	timestamp = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
+	return (timestamp);
 }
 
 int	pthread_helper(t_global_data *global_data, void*f)
@@ -57,7 +62,8 @@ int	pthread_helper(t_global_data *global_data, void*f)
 		}
 		else if (f == pthread_mutex_init)
 		{
-			error = pthread_mutex_init(global_data->forks + i, NULL);
+			error = pthread_mutex_init(global_data->forks + i, NULL)
+				|| pthread_mutex_init(global_data->lock + i, NULL);
 		}
 		else if (f == pthread_mutex_destroy)
 		{
@@ -70,28 +76,14 @@ int	pthread_helper(t_global_data *global_data, void*f)
 	return (0);
 }
 
-int check_someone_died(t_philosopher *phil)
+int check_someone_died(t_philosopher *ph)
 {
-    int someone_died = 0;
+    int ret;
 
-    pthread_mutex_lock(phil->someone_died_mutex);
-    if (*(phil->someone_died) == 1) {
-        someone_died = 1;
-		pthread_mutex_unlock(phil->left_fork);
-		pthread_mutex_unlock(phil->right_fork);	
-    }
-    pthread_mutex_unlock(phil->someone_died_mutex);
-
-    return someone_died;
+	ret = 0;
+    pthread_mutex_lock(&ph->g_data->someone_died_mutex);
+    if (ph->g_data->someone_died == 1)
+		ret = 1;
+    pthread_mutex_unlock(&ph->g_data->someone_died_mutex);
+    return ret;
 }
-/*
-void	free_all(t_global_data *global_data)
-{
-	int	i;
-
-	i = 0;
-	while (i < global_data->phil_amount)
-		pthread_mutex_destroy(global_data->forks + i++);
-	free(global_data->forks);
-	free(global_data->philosophers);
-} */
