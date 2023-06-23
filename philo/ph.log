@@ -1,0 +1,20 @@
+Allocating memory for philosophers: 176 bytes
+Allocating memory for forks: 80 bytes
+Allocating memory for lock: 80 bytes
+49 1 is thinking
+51 1 has taken a fork
+52 1 has taken a fork
+53 1 is eating
+105 2 is thinking
+556 1 is sleeping
+564 2 has taken a fork
+566 2 has taken a fork
+566 2 is eating
+1154 1 died
+*********************************
+Results:
+amount	Die time	Eat time	Sleep time	Servings
+2		600		500		500		3
+1 remaining servings: 2
+2 remaining servings: 2
+*********************************

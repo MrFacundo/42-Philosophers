@@ -1,8 +1,8 @@
 NAME 			= philo
 SOURCES 		= $(shell echo srcs/*.c)
-OBJECTS 		= $(SOURCES:.c=.o)
+OBJECTS 		= $(addprefix objects/,$(notdir $(SOURCES:.c=.o)))
 CC 				= gcc
-CFLAGS 			= -g -pthread -Wall -Wextra -Werror -O3 -fsanitize=thread
+CFLAGS 			= -Wall -Wextra -Werror -g -pthread -fsanitize=thread
 
 # --- COLORS ---
 
@@ -16,33 +16,24 @@ GREEN=\033[32m
 all: $(NAME)
 
 $(NAME): $(OBJECTS) 
-		@echo  "$(GRAY)----Compiling $(NAME)----$(NONE)"
-		$(CC) $(CFLAGS) -o $@ $(OBJECTS)
-		@echo "$(GREEN)$(NAME) Compiled! ᕦ(♥_♥)ᕤ$(NONE)\n"
+	@echo  "$(GRAY)----Compiling $(NAME)----$(NONE)"
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
+	@echo "$(GREEN)$(NAME) Compiled! ᕦ(♥_♥)ᕤ$(NONE)\n"
 
-.c.o:	%.o : %.c
-		$(CC) -c $< -o $@
+objects/%.o: srcs/%.c | objects
+	$(CC) -c $< -o $@
 
 clean:
-		@echo "$(GREEN)Deleting obs! ( ͡° ͜ʖ ͡°) $(NONE)"
-		rm -f $(OBJECTS)
+	@echo "$(GREEN)Deleting obs! ( ͡° ͜ʖ ͡°) $(NONE)"
+	rm -f $(OBJECTS)
 
 fclean:	clean
-		@echo "$(RED)Deleting everything! ( ͡° ͜ʖ ͡°) $(NONE)"
-		rm -f $(NAME) $(OBJECTS)
-
-show:
-		@printf "NAME	: $(NAME)\n"
-		@printf "CC	: $(CC)\n"
-		@printf "CFLAGS	: $(CFLAGS)\n"
-		@printf "SOURCES	: $(SOURCES)\n"
-
-valgrind: all
-		 valgrind --leak-check=full --track-origins=yes --show-leak-kinds=all -s ./so_long maps/map_4.ber
+	@echo "$(RED)Deleting everything! ( ͡° ͜ʖ ͡°) $(NONE)"
+	rm -f $(NAME)
 
 re: fclean all
 
-rs:		 re
-		./philo
+rs:	re
+	./philo
 
 .PHONY: all clean fclean re rs show valgrind

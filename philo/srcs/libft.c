@@ -6,40 +6,32 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/07 09:02:37 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/19 09:25:01 by facundo          ###   ########.fr       */
+/*   Updated: 2023/06/23 14:46:57 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philosophers.h"
 
-static int	contains(char start, char end, char c)
+int	ft_isdigit(int c)
 {
-	return (c >= start && c <= end);
+	return (c >= '0' && c <= '9');
 }
 
 int	ft_atoi(const char *nptr)
 {
 	int	i;
-	int	sign;
-	int	res;
+	int	ret;
 
 	i = 0;
-	sign = 1;
-	res = 0;
-	while (contains('\t', '\r', nptr[i]) || nptr[i] == ' ')
-		i++;
-	if (nptr[i] == '+' || nptr[i] == '-')
+	ret = 0;
+	while (nptr[i])
 	{
-		if (nptr[i] == '-')
-			sign *= -1;
-		i++;
+		if (!ft_isdigit(nptr[i++]))
+			return (0);
 	}
-	while (contains('0', '9', nptr[i]))
-	{
-		res = (nptr[i] - '0') + (res * 10);
-		i++;
-	}
-	return (res * sign);
+	while (*nptr)
+		ret = ret * 10 + (*nptr++ - '0');
+	return (ret);
 }
 
 int	ft_strncmp(const char *s1, const char *s2, size_t n)
