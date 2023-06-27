@@ -1,5 +1,5 @@
 ****<h1 align="center">
-	📖 Push Swap
+	📖 Philosophers
 </h1>
 
 <h2 align="center">
@@ -14,8 +14,7 @@
 
 ## Summary
 
-
-### Allowed External Functions
+An implementation of the [dining philosophers problem](https://en.wikipedia.org/wiki/Dining_philosophers_problem) using multi-threading programming and mutexes.
 
 
 ## Subject
