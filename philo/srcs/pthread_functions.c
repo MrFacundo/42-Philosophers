@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pthread_functions.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/23 16:55:10 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/23 16:59:12 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/05 00:18:51 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,12 @@
 
 int	create_threads(t_philosopher *ph)
 {
-	return (pthread_create(&ph->lifecycle, NULL, routine, ph)
-		|| pthread_create(&ph->monitoring, NULL, monitor_starvation, ph));
+	return (pthread_create(&ph->lifecycle, NULL, routine, ph));
 }
 
 int	join_threads(t_philosopher *ph)
 {
-	return (pthread_join(ph->lifecycle, NULL)
-		|| pthread_join(ph->monitoring, NULL));
+	return (pthread_join(ph->lifecycle, NULL));
 }
 
 int	initialize_mutexes(t_global_data *data, int i)

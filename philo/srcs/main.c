@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:24 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/22 17:01:05 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/05 20:45:51 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,24 @@
 
 void	*monitor_starvation(void *arg)
 {
-	t_philosopher	*ph;
+	t_global_data	*data;
+	int				i;
 
-	ph = (t_philosopher *)arg;
-	ft_usleep(ph->g_data->die_t);
-	while (!check_someone_died(ph) && !check_servings(ph))
+	data = (t_global_data *)arg;
+	ft_usleep(data->die_t);
+	while (!check_someone_died(data))
 	{
-		if (check_is_dead(ph))
+		i = -1;
+		while (++i < data->phil_amount)
 		{
-			pthread_mutex_lock(&ph->g_data->someone_died_mutex);
-			ph->g_data->someone_died = 1;
-			pthread_mutex_unlock(&ph->g_data->someone_died_mutex);
-			print_status(ph, S_DIED);
+			// check servings
+			if (check_is_dead(&data->philosophers[i]))
+			{
+				pthread_mutex_lock(&data->someone_died_mutex);
+				data->someone_died = 1;
+				pthread_mutex_unlock(&data->someone_died_mutex);
+				print_status(&data->philosophers[i], S_DIED);
+			}
 		}
 	}
 	return (NULL);
@@ -64,7 +70,7 @@ void	*routine(void *arg)
 
 	ph = (t_philosopher *)arg;
 	assign_forks(ph, &left_fork, &right_fork);
-	while (!check_servings(ph) && !check_someone_died(ph))
+	while (!check_servings(ph) && !check_someone_died(ph->g_data))
 	{
 		print_status(ph, S_THINK);
 		if (ph->g_data->phil_amount == 1)
@@ -98,8 +104,10 @@ int	main(int argc, char **argv)
 	pthread_helper(&global_data, pthread_mutex_init);
 	pthread_mutex_init(&global_data.someone_died_mutex, NULL);
 	init_philosophers(&global_data);
-	if (pthread_helper(&global_data, pthread_create)
-		|| pthread_helper(&global_data, pthread_join)
+	pthread_create(&global_data.monitoring, NULL, monitor_starvation, &global_data);
+	pthread_helper(&global_data, pthread_create);
+	pthread_join(global_data.monitoring, NULL);
+	if (pthread_helper(&global_data, pthread_join)
 		|| pthread_helper(&global_data, pthread_mutex_destroy))
 	{
 		free_all(&global_data, E_THREAD);

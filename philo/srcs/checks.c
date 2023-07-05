@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:34:10 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/23 14:46:43 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/05 00:14:48 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,12 +36,12 @@ int	check_servings(t_philosopher *ph)
 	return (ret);
 }
 
-int	check_someone_died(t_philosopher *ph)
+int	check_someone_died(t_global_data *data)
 {
 	int	ret;
 
-	pthread_mutex_lock(&ph->g_data->someone_died_mutex);
-	ret = ph->g_data->someone_died == 1;
-	pthread_mutex_unlock(&ph->g_data->someone_died_mutex);
+	pthread_mutex_lock(&data->someone_died_mutex);
+	ret = data->someone_died == 1;
+	pthread_mutex_unlock(&data->someone_died_mutex);
 	return (ret);
 }

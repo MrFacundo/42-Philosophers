@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:51 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/23 17:05:31 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/05 00:12:05 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ typedef struct s_philosopher
 	struct s_global_data	*g_data;
 	int						id;
 	pthread_t				lifecycle;
-	pthread_t				monitoring;
 	pthread_mutex_t			*left_fork;
 	pthread_mutex_t			*right_fork;
 	pthread_mutex_t			*lock;
@@ -57,6 +56,7 @@ typedef struct s_philosopher
 typedef struct s_global_data
 {
 	int						phil_amount;
+	pthread_t				monitoring;
 	int						someone_died;
 	pthread_mutex_t			someone_died_mutex;
 	t_philosopher			*philosophers;
@@ -72,7 +72,7 @@ typedef struct s_global_data
 //checks
 int		check_is_dead(t_philosopher *ph);
 int		check_servings(t_philosopher *ph);
-int		check_someone_died(t_philosopher *ph);
+int		check_someone_died(t_global_data *data);
 
 //debug
 void	print_results(t_global_data *global_data);

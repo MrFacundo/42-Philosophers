@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:14:44 by facundo           #+#    #+#             */
-/*   Updated: 2023/06/23 16:55:36 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/05 00:17:07 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	print_status(t_philosopher *ph, char *status)
 
 	timestamp = get_time() - ph->g_data->start_time;
 	if ((check_is_dead(ph) && !ft_strncmp(status, S_DIED, 5))
-		|| !check_someone_died(ph))
+		|| !check_someone_died(ph->g_data))
 		printf("%ld %d %s\n", timestamp, ph->id, status);
 }
 

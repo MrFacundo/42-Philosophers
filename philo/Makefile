@@ -2,7 +2,7 @@ NAME 			= philo
 SOURCES 		= $(shell echo srcs/*.c)
 OBJECTS 		= $(addprefix objects/,$(notdir $(SOURCES:.c=.o)))
 CC 				= gcc
-CFLAGS 			= -Wall -Wextra -Werror -g -pthread -fsanitize=thread
+CFLAGS 			= -Wall -Wextra -Werror -g -pthread
 
 # --- COLORS ---
 
