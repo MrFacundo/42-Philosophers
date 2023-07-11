@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philosophers.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:51 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/05 00:12:05 by facu             ###   ########.fr       */
+/*   Updated: 2023/07/11 16:38:43 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ typedef struct s_global_data
 	pthread_t				monitoring;
 	int						someone_died;
 	pthread_mutex_t			someone_died_mutex;
+	pthread_mutex_t			printf_mutex;
 	t_philosopher			*philosophers;
 	pthread_mutex_t			*forks;
 	pthread_mutex_t			*lock;
@@ -91,7 +92,15 @@ int		initialize_global_data(t_global_data *global_data,
 			int argc, char **argv);
 
 //pthread_functions
+int		initialize_global_mutexes(t_global_data *data);
 int		pthread_helper(t_global_data *data, void*f);
+
+//pthread_utils
+int		create_monitor_thread(t_global_data *data);
+int		create_lifecycle_threads(t_philosopher *ph);
+int		initialize_global_mutexes(t_global_data *data);
+int		initialize_mutexes(t_global_data *data, int i);
+int		destroy_mutexes(t_global_data *data, int i);
 
 //subroutines
 void	assign_forks(t_philosopher *ph, pthread_mutex_t **left_fork,

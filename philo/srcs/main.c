@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:24 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/05 20:45:51 by facu             ###   ########.fr       */
+/*   Updated: 2023/07/11 17:02:08 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	*monitor_starvation(void *arg)
 		i = -1;
 		while (++i < data->phil_amount)
 		{
-			// check servings
+			check_servings(&data->philosophers[i]);
 			if (check_is_dead(&data->philosophers[i]))
 			{
 				pthread_mutex_lock(&data->someone_died_mutex);
@@ -34,7 +34,7 @@ void	*monitor_starvation(void *arg)
 			}
 		}
 	}
-	return (NULL);
+	return (0);
 }
 
 void	table_for_one(t_philosopher *ph, pthread_mutex_t *left_fork)
@@ -85,7 +85,7 @@ void	*routine(void *arg)
 			nap(ph);
 		}
 	}
-	return (NULL);
+	return (0);
 }
 
 /* args: number_of_philosophers, time_to_die, time_to_eat, time_to_sleep,
@@ -101,13 +101,10 @@ int	main(int argc, char **argv)
 	}
 	if (initialize_global_data(&global_data, argc, argv))
 		return (1);
-	pthread_helper(&global_data, pthread_mutex_init);
-	pthread_mutex_init(&global_data.someone_died_mutex, NULL);
 	init_philosophers(&global_data);
-	pthread_create(&global_data.monitoring, NULL, monitor_starvation, &global_data);
-	pthread_helper(&global_data, pthread_create);
-	pthread_join(global_data.monitoring, NULL);
-	if (pthread_helper(&global_data, pthread_join)
+	if (pthread_helper(&global_data, pthread_mutex_init)
+		|| pthread_helper(&global_data, pthread_create) 
+		|| pthread_helper(&global_data, pthread_join)
 		|| pthread_helper(&global_data, pthread_mutex_destroy))
 	{
 		free_all(&global_data, E_THREAD);

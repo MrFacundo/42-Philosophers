@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:34:10 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/05 00:14:48 by facu             ###   ########.fr       */
+/*   Updated: 2023/07/11 17:02:25 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	check_is_dead(t_philosopher *ph)
 {
+	int	ret;
+
 	pthread_mutex_lock(ph->lock);
 	if (ph->is_eating)
 	{
@@ -22,8 +24,9 @@ int	check_is_dead(t_philosopher *ph)
 	}
 	if (get_time() - ph->last_serving_t > ph->g_data->die_t)
 		ph->is_dead = 1;
+	ret = ph->is_dead;
 	pthread_mutex_unlock(ph->lock);
-	return (ph->is_dead);
+	return (ret);
 }
 
 int	check_servings(t_philosopher *ph)
@@ -33,6 +36,8 @@ int	check_servings(t_philosopher *ph)
 	pthread_mutex_lock(ph->lock);
 	ret = ph->servings == 0;
 	pthread_mutex_unlock(ph->lock);
+	if (ret)
+		printf("Philosopher %d has eaten %d times\n", ph->id, ph->g_data->servings);
 	return (ret);
 }
 
