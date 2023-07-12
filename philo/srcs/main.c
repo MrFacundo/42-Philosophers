@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:24 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/11 17:02:08 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/12 15:49:46 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,19 @@ void	*monitor_starvation(void *arg)
 {
 	t_global_data	*data;
 	int				i;
+	int				total_servings;
 
 	data = (t_global_data *)arg;
+	total_servings = data->servings * data->phil_amount;
 	ft_usleep(data->die_t);
-	while (!check_someone_died(data))
+	while (!check_someone_died(data) && total_servings)
 	{
+		ft_usleep(5);
 		i = -1;
-		while (++i < data->phil_amount)
+		while (++i < data->phil_amount && !check_someone_died(data))
 		{
-			check_servings(&data->philosophers[i]);
+			if (check_servings(&data->philosophers[i]) && total_servings--)
+				continue ;
 			if (check_is_dead(&data->philosophers[i]))
 			{
 				pthread_mutex_lock(&data->someone_died_mutex);
@@ -94,23 +98,16 @@ int	main(int argc, char **argv)
 {
 	t_global_data	global_data;
 
-	if (argc < 5 || argc > 6)
-	{
-		printf(E_ARGS);
+	if (check_argc(argc))
 		return (1);
-	}
 	if (initialize_global_data(&global_data, argc, argv))
 		return (1);
 	init_philosophers(&global_data);
 	if (pthread_helper(&global_data, pthread_mutex_init)
-		|| pthread_helper(&global_data, pthread_create) 
+		|| pthread_helper(&global_data, pthread_create)
 		|| pthread_helper(&global_data, pthread_join)
 		|| pthread_helper(&global_data, pthread_mutex_destroy))
-	{
-		free_all(&global_data, E_THREAD);
-		return (1);
-	}
-	print_results(&global_data);
+		return (free_all(&global_data, E_THREAD));
 	free_all(&global_data, 0);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:51 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/11 16:38:43 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/12 16:00:06 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,25 @@ typedef struct s_philosopher
 typedef struct s_global_data
 {
 	int						phil_amount;
-	pthread_t				monitoring;
-	int						someone_died;
-	pthread_mutex_t			someone_died_mutex;
-	pthread_mutex_t			printf_mutex;
-	t_philosopher			*philosophers;
-	pthread_mutex_t			*forks;
-	pthread_mutex_t			*lock;
 	long					start_time;
 	int						eat_t;
 	int						sleep_t;
 	int						die_t;
 	int						servings;
+	t_philosopher			*philosophers;
+	pthread_mutex_t			*forks;
+	pthread_mutex_t			*lock;
+	pthread_mutex_t			printf_mutex;
+	pthread_mutex_t			someone_died_mutex;
+	int						someone_died;
+	pthread_t				monitoring;
 }	t_global_data;
 
 //checks
 int		check_is_dead(t_philosopher *ph);
 int		check_servings(t_philosopher *ph);
 int		check_someone_died(t_global_data *data);
+int		check_argc(int argc);
 
 //debug
 void	print_results(t_global_data *global_data);
@@ -117,6 +118,6 @@ void	ft_usleep(long time_in_ms);
 long	get_time(void);
 void	update_elapsed_last_serving_time(t_philosopher *ph);
 int		pthread_helper(t_global_data *global_data, void*f);
-void	free_all(t_global_data *global_data, char *msg);
+int		free_all(t_global_data *global_data, char *msg);
 
 #endif

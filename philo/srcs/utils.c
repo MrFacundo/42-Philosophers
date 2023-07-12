@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:14:44 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/11 13:55:48 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/12 15:40:15 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@ void	print_status(t_philosopher *ph, char *status)
 	timestamp = get_time() - ph->g_data->start_time;
 	if ((check_is_dead(ph) && !ft_strncmp(status, S_DIED, 5))
 		|| !check_someone_died(ph->g_data))
-		{
-			pthread_mutex_lock(&ph->g_data->printf_mutex);
-			printf("%ld %d %s\n", timestamp, ph->id, status);
-			pthread_mutex_unlock(&ph->g_data->printf_mutex);
-		}
+	{
+		pthread_mutex_lock(&ph->g_data->printf_mutex);
+		printf("%ld %d %s\n", timestamp, ph->id, status);
+		pthread_mutex_unlock(&ph->g_data->printf_mutex);
+	}
 }
 
 void	ft_usleep(long time_in_ms)
@@ -46,7 +46,7 @@ long	get_time(void)
 	return (timestamp);
 }
 
-void	free_all(t_global_data *global_data, char *msg)
+int		free_all(t_global_data *global_data, char *msg)
 {
 	if (global_data->philosophers)
 		free(global_data->philosophers);
@@ -56,4 +56,5 @@ void	free_all(t_global_data *global_data, char *msg)
 		free(global_data->lock);
 	if (msg)
 		printf("%s\n", msg);
+	return (1);
 }

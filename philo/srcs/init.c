@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:13:15 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/11 16:50:30 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/12 15:41:41 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,15 +59,9 @@ int	parse_arguments(t_global_data *data, int argc, char **argv)
 	data->someone_died = 0;
 	data->start_time = get_time();
 	if (!data->philosophers || !data->forks || !data->lock)
-	{
-		free_all(data, E_MALLOC);
-		return (1);
-	}
+		return (free_all(data, E_MALLOC));
 	if (check_limits(data))
-	{
-		free_all(data, E_ARGS);
-		return (1);
-	}
+		return (free_all(data, E_ARGS));
 	return (0);
 }
 
@@ -76,9 +70,6 @@ int	initialize_global_data(t_global_data *data, int argc, char **argv)
 	if (parse_arguments(data, argc, argv))
 		return (1);
 	if (pthread_helper(data, initialize_global_mutexes))
-	{
-		free_all(data, E_THREAD);
-		return (1);
-	}
+		return (free_all(data, E_THREAD));
 	return (0);
 }

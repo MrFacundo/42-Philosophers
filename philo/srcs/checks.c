@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/21 16:34:10 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/11 17:02:25 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/12 15:49:45 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ int	check_servings(t_philosopher *ph)
 	pthread_mutex_lock(ph->lock);
 	ret = ph->servings == 0;
 	pthread_mutex_unlock(ph->lock);
-	if (ret)
-		printf("Philosopher %d has eaten %d times\n", ph->id, ph->g_data->servings);
 	return (ret);
 }
 
@@ -49,4 +47,14 @@ int	check_someone_died(t_global_data *data)
 	ret = data->someone_died == 1;
 	pthread_mutex_unlock(&data->someone_died_mutex);
 	return (ret);
+}
+
+int	check_argc(int argc)
+{
+	if (argc < 5 || argc > 6)
+	{
+		printf(E_ARGS);
+		return (1);
+	}
+	return (0);
 }
