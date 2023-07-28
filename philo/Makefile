@@ -33,7 +33,4 @@ fclean:	clean
 
 re: fclean all
 
-rs:	re
-	./philo
-
 .PHONY: all clean fclean re rs show valgrind

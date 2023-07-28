@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:13:59 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/27 17:28:15 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/28 09:24:36 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void	*monitor_starvation(void *arg)
 void	*routine(void *arg)
 {
 	t_philo	*philo;
-	t_
 
 	philo = (t_philo *)arg;
 	while (philo->g_data->servings != 0)
@@ -73,11 +72,11 @@ void	*routine(void *arg)
 		print_status(philo, S_EAT);
 		ft_usleep(philo->g_data->eat_t * 1000);
 		philo->last_serving_t = get_time();
+		philo->g_data->servings--;
 		print_status(philo, S_SLEEP);
 		sem_post(philo->forks);
 		sem_post(philo->forks);
 		ft_usleep(philo->g_data->sleep_t * 1000);
-		philo->g_data->servings--;
 	}
 	return (0);
 }

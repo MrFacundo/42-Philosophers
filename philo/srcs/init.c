@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:13:15 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/12 15:41:41 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/27 15:46:36 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,13 +43,13 @@ void	init_philosophers(t_global_data *d)
 	}
 }
 
-int	parse_arguments(t_global_data *data, int argc, char **argv)
+int	parse_arguments(t_global_data *data, char **argv)
 {
 	data->phil_amount = ft_atoi(argv[1]);
 	data->die_t = ft_atoi(argv[2]);
 	data->eat_t = ft_atoi(argv[3]);
 	data->sleep_t = ft_atoi(argv[4]);
-	if (argc == 6)
+	if (argv[5])
 		data->servings = ft_atoi(argv[5]);
 	else
 		data->servings = -1;
@@ -67,7 +67,7 @@ int	parse_arguments(t_global_data *data, int argc, char **argv)
 
 int	initialize_global_data(t_global_data *data, int argc, char **argv)
 {
-	if (parse_arguments(data, argc, argv))
+	if (parse_arguments(data, argv))
 		return (1);
 	if (pthread_helper(data, initialize_global_mutexes))
 		return (free_all(data, E_THREAD));
