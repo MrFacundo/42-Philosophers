@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:24 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/27 10:03:35 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/28 14:13:14 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void	assign_forks(t_philosopher *ph,
 		*right_fork = ph->right_fork;
 	}
 }
-
+/*so that the boys can think, eat and sleep*/
 void	*routine(void *arg)
 {
 	t_philosopher	*ph;

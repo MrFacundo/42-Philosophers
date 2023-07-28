@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/27 16:54:15 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/28 14:12:02 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 # include <semaphore.h>
 # include <sys/stat.h>
 # include <fcntl.h>
-#include <sys/time.h>
-#include <semaphore.h>
-#include <stdio.h>
-#include <stdlib.h>
+# include <sys/time.h>
+# include <semaphore.h>
+# include <stdio.h>
+# include <stdlib.h>
 # include <unistd.h>
+# include <sys/wait.h>
+# include <signal.h>
 
 // limits
 # define MIN_PHIL_AMOUNT 1
@@ -46,10 +48,9 @@ typedef struct s_philo
 	int						id;
 	int						pid;
 	long					last_serving_t;
-	sem_t					*printf_sem;
-	sem_t					*forks;
 	pthread_t				monitoring;
 	pthread_t				lifecycle;
+	sem_t					*lock;
 	struct s_global_data	*g_data;
 }	t_philo;
 
@@ -66,15 +67,36 @@ typedef struct s_global_data
 	long					start_time;
 }	t_global_data;
 
-/* utils.c */
-long	get_time(void);
-void	*monitor_starvation(void *arg);
-void	*routine(void *arg);
+/* checks.c */
+int		check_limits(t_global_data *data);
+void	check_argc(int argc);
+int		check_is_dead(long timestamp, t_philo *philo);
+int		check_servings(t_philo *philo);
+
+/* debug.c */
+void	print_results(t_global_data *global_data);
+
+/* init.c */
+void	initialize_global_data(t_global_data *data, char **argv);
 
 /* libft_utils.c */
 int		ft_atoi(char *str);
 int		ft_strlen(char *s);
 int		ft_strncmp(char *str_1, char *str_2, int n);
 void	ft_usleep(unsigned int n);
+
+/* main.c */
+void	exit_routine(t_global_data *global_data, char *msg);
+
+/* subroutines.c */
+void	eat(t_philo *philo);
+void	leave_forks(t_philo *philo);
+void	nap(t_philo *philo);
+
+/* utils.c */
+void	print_status(t_philo *philo, char *status);
+long	get_time(void);
+void	*monitor_starvation(void *arg);
+void	*routine(void *arg);
 
 #endif
