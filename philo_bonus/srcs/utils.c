@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:13:59 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/28 16:42:44 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/31 15:36:53 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,24 +54,26 @@ void	*monitor_starvation(void *arg)
 		if (check_is_dead(ts, philo))
 		{
 			print_status(philo, S_DIED);
-			exit(philo->id);
+			if (philo->g_data->phil_amount == 1)
+				return (0);
+			else
+				exit(philo->id);
 		}
-		ft_usleep(500);
 	}
 	return (0);
 }
 
-void	*routine(void *arg)
+void	*routine(void *arg)	
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->g_data->servings != 0)
+	while (philo->g_data->servings != 0 && !check_is_dead(get_time(), philo))
 	{
 		print_status(philo, S_THINK);
 		if (sem_wait(philo->g_data->forks) == 0)
 		{
-			if (philo->g_data->phil_amount = 1)
+			if (philo->g_data->phil_amount == 1)
 			{
 				print_status(philo, S_FORK);
 				return (0);
@@ -84,6 +86,7 @@ void	*routine(void *arg)
 			}
 			else
 			{
+				printf("putting fork back\n");
 				sem_post(philo->g_data->forks);
 				ft_usleep(10);
 			}

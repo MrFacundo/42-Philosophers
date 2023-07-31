@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:48 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/28 16:49:53 by facundo          ###   ########.fr       */
+/*   Updated: 2023/07/31 15:36:38 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,9 @@ void	waiter(t_global_data *global_data)
 		waitpid(-1, &status, 0);
 		if (WIFEXITED(status) && (WEXITSTATUS(status) > 0))
 		{
-			printf("%d\n", WEXITSTATUS(status));
 			while (i < global_data->phil_amount)
 				if (++i != WEXITSTATUS(status))
-				{
-					printf("i: %d\n", i);
 					kill(global_data->philosophers[i - 1].pid, SIGKILL);
-				}
 			return ;
 		}
 	}
@@ -68,16 +64,20 @@ int	helper(t_global_data *data)
 		if (!ph->pid)
 		{
 			if (pthread_create(&ph->lifecycle, 0, routine, ph)
-				|| pthread_create(&ph->monitoring, 0, monitor_starvation, ph)
-				|| pthread_join(ph->lifecycle, 0)
-				|| pthread_join(ph->monitoring, 0))
-					return (1);
+			|| pthread_create(&ph->monitoring, 0, monitor_starvation, ph)
+			|| pthread_join(ph->lifecycle, 0)
+			|| pthread_join(ph->monitoring, 0))
+				return (1);
 			sem_close(ph->lock);
+			sem_close(data->printf_sem);
+			sem_close(data->forks);
 			free(data->philosophers);
 			exit(0);
 		}
 		else if (ph->pid < 0)
 			return (1);
+		else
+			sem_close(ph->lock);
 	}
 	waiter(data);
 	return (0);
@@ -96,7 +96,6 @@ int	main(int argc, char **argv)
 	sem_unlink("printf_sem");
 	sem_unlink("forks");
 	sem_unlink("lock");
-	// print_results(&global_data);
 	free(global_data.philosophers);
 	return (0);
 }
