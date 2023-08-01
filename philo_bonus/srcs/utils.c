@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:13:59 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/31 15:36:53 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/01 11:26:39 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	while (philo->g_data->servings != 0 && !check_is_dead(get_time(), philo))
+	while (philo->g_data->servings)
 	{
 		print_status(philo, S_THINK);
 		if (sem_wait(philo->g_data->forks) == 0)

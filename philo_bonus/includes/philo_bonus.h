@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/31 15:06:00 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/01 10:52:07 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct s_global_data
 	int						servings;
 	sem_t					*printf_sem;
 	sem_t					*forks;
-	sem_t					*someone_died;
+	sem_t					*terminate;
 	t_philo					*philosophers;
 	long					start_time;
 }	t_global_data;
