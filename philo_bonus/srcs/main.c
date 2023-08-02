@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:48 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/01 11:26:20 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/01 23:27:03 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,7 @@ void	waiter(t_global_data *global_data)
 	i = -1;
 	status = 0;
 	while (++i < global_data->phil_amount)
-	{
 		waitpid(-1, &status, 0);
-		if (WIFEXITED(status) && (WEXITSTATUS(status) > 0))
-		{
-			while (i < global_data->phil_amount)
-				if (++i != WEXITSTATUS(status))
-					kill(global_data->philosophers[i - 1].pid, SIGKILL);
-			return ;
-		}
-	}
 	return ;
 }
 
@@ -72,7 +63,6 @@ int	helper(t_global_data *data)
 			sem_close(data->printf_sem);
 			sem_close(data->forks);
 			free(data->philosophers);
-			exit(0);
 		}
 		else if (ph->pid < 0)
 			return (1);

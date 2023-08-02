@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:08:05 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/01 11:26:46 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/01 23:25:01 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ void	initialize_global_data(t_global_data *data, char **argv)
 	sem_unlink("forks");
 	sem_unlink("lock");
 	sem_unlink("terminate");
-	data->terminate = sem_open("someone_died", O_CREAT, S_IRWXU, 0);
+	data->terminate = sem_open("terminate", O_CREAT, S_IRWXU, 1);
+	data->term = 0;
 	data->forks = sem_open("forks", O_CREAT, S_IRWXU, data->phil_amount);
 	data->printf_sem = sem_open("printf_sem", O_CREAT, S_IRWXU, 1);
 	data->start_time = get_time();

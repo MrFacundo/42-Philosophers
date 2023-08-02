@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:13:59 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/01 11:26:39 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 09:33:09 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,19 @@ void	print_status(t_philo *philo, char *status)
 	if (!philo->g_data->servings)
 		return ;
 	sem_wait(philo->g_data->printf_sem);
+	if (!ft_strncmp(S_DIED, status, ft_strlen(status)) && check_is_dead(timestamp, philo))
+		printf("%ld %d %s\n", timestamp, philo->id, status);
+	printf("philo->g_data->terminate: %d\n", philo->g_data->term);
+	//check if someone died so that we don't print anything and shut down
+    sem_wait(philo->g_data->terminate);
+    if (philo->g_data->term == 1)
+    {
+        sem_post(philo->g_data->terminate);
+        sem_post(philo->g_data->printf_sem);
+        return ;
+    }
+    sem_post(philo->g_data->terminate);
+
 	if (!ft_strncmp(S_EAT, status, ft_strlen(status)))
 	{
 		sem_wait(philo->lock);
@@ -27,8 +40,6 @@ void	print_status(t_philo *philo, char *status)
 		sem_post(philo->lock);
 	}
 	printf("%ld %d %s\n", timestamp, philo->id, status);
-	if (ft_strncmp(S_DIED, status, ft_strlen(status)))
-		sem_post(philo->g_data->printf_sem);
 }
 
 long	get_time(void)
@@ -53,11 +64,13 @@ void	*monitor_starvation(void *arg)
 		ts = get_time();
 		if (check_is_dead(ts, philo))
 		{
+			 //tell everybody to shut down because of death
+            sem_wait(philo->g_data->terminate);
+            philo->g_data->term = 1;
+            sem_post(philo->g_data->terminate);
+
 			print_status(philo, S_DIED);
-			if (philo->g_data->phil_amount == 1)
-				return (0);
-			else
-				exit(philo->id);
+			return (0);
 		}
 	}
 	return (0);
@@ -73,6 +86,15 @@ void	*routine(void *arg)
 		print_status(philo, S_THINK);
 		if (sem_wait(philo->g_data->forks) == 0)
 		{
+			            //check if we need to shut down
+            sem_wait(philo->g_data->terminate);
+            if (philo->g_data->term == 1)
+            {
+                sem_post(philo->g_data->terminate);
+                return (NULL);
+            }
+            sem_post(philo->g_data->terminate);
+
 			if (philo->g_data->phil_amount == 1)
 			{
 				print_status(philo, S_FORK);
