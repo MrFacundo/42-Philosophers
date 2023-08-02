@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:08:05 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/01 23:25:01 by facu             ###   ########.fr       */
+/*   Updated: 2023/08/02 16:17:14 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	initialize_global_data(t_global_data *data, char **argv)
 	data->die_t = ft_atoi(argv[2]);
 	data->eat_t = ft_atoi(argv[3]);
 	data->sleep_t = ft_atoi(argv[4]);
+	data->servings = -1;
 	if (argv[5])
 		data->servings = ft_atoi(argv[5]);
 	data->philosophers = malloc(sizeof(t_philo) * data->phil_amount);
@@ -25,10 +26,13 @@ void	initialize_global_data(t_global_data *data, char **argv)
 	sem_unlink("forks");
 	sem_unlink("lock");
 	sem_unlink("terminate");
-	data->terminate = sem_open("terminate", O_CREAT, S_IRWXU, 1);
+	sem_unlink("shotdown");
 	data->term = 0;
+	data->terminate = sem_open("terminate", O_CREAT, S_IRWXU, 1);
 	data->forks = sem_open("forks", O_CREAT, S_IRWXU, data->phil_amount);
+	data->shotdown = sem_open("shotdown", O_CREAT, S_IRWXU, 0);
 	data->printf_sem = sem_open("printf_sem", O_CREAT, S_IRWXU, 1);
+	data->total_servings = sem_open("total_servings", O_CREAT, S_IRWXU, 0);
 	data->start_time = get_time();
 	if (!data->philosophers)
 		exit_routine(data, E_MALLOC);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:13:59 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 09:33:09 by facu             ###   ########.fr       */
+/*   Updated: 2023/08/02 16:56:32 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,13 @@ void	print_status(t_philo *philo, char *status)
 	if (!philo->g_data->servings)
 		return ;
 	sem_wait(philo->g_data->printf_sem);
-	if (!ft_strncmp(S_DIED, status, ft_strlen(status)) && check_is_dead(timestamp, philo))
+	if (!ft_strncmp(S_DIED, status, ft_strlen(status)) && !philo->g_data->term)
+	{
 		printf("%ld %d %s\n", timestamp, philo->id, status);
-	printf("philo->g_data->terminate: %d\n", philo->g_data->term);
+		sem_post(philo->g_data->printf_sem);
+		return ;
+	}
+
 	//check if someone died so that we don't print anything and shut down
     sem_wait(philo->g_data->terminate);
     if (philo->g_data->term == 1)
@@ -33,13 +37,8 @@ void	print_status(t_philo *philo, char *status)
     }
     sem_post(philo->g_data->terminate);
 
-	if (!ft_strncmp(S_EAT, status, ft_strlen(status)))
-	{
-		sem_wait(philo->lock);
-		philo->last_serving_t = get_time();
-		sem_post(philo->lock);
-	}
 	printf("%ld %d %s\n", timestamp, philo->id, status);
+	sem_post(philo->g_data->printf_sem);
 }
 
 long	get_time(void)
@@ -52,10 +51,25 @@ long	get_time(void)
 	return (timestamp);
 }
 
+void	*monitor_shoutdown(void *arg)
+{
+	t_global_data	*data;
+
+	data = (t_global_data *)arg;
+	sem_wait(data->shotdown);
+	//sem_wait(data->terminate);
+	data->term = 1;
+	//sem_post(data->terminate);
+	sem_post(data->shotdown);
+	printf("returning from monitor shotdown\n");
+	return (0);
+}
+
 void	*monitor_starvation(void *arg)
 {
 	long	ts;
 	t_philo	*philo;
+	int		i;
 
 	philo = (t_philo *)arg;
 	while (check_servings(philo))
@@ -64,15 +78,26 @@ void	*monitor_starvation(void *arg)
 		ts = get_time();
 		if (check_is_dead(ts, philo))
 		{
-			 //tell everybody to shut down because of death
-            sem_wait(philo->g_data->terminate);
-            philo->g_data->term = 1;
-            sem_post(philo->g_data->terminate);
+				printf("here\n");
 
-			print_status(philo, S_DIED);
+			if (!check_term(philo))
+            {
+				sem_wait(philo->g_data->terminate);
+				sem_post(philo->g_data->shotdown);
+				print_status(philo, S_DIED);
+				philo->g_data->term = 1;
+				i = 0;
+				while (i++ <= philo->g_data->phil_amount)
+					sem_post(philo->g_data->total_servings);
+				sem_post(philo->g_data->terminate);
+			}
+			printf("ph %d returning from monitor starvation\n", philo->id);
 			return (0);
 		}
+
 	}
+	sem_post(philo->g_data->total_servings);
+	printf("ph %d returning from monitor starvation because servings are enough\n", philo->id);
 	return (0);
 }
 
@@ -84,20 +109,23 @@ void	*routine(void *arg)
 	while (philo->g_data->servings)
 	{
 		print_status(philo, S_THINK);
+
 		if (sem_wait(philo->g_data->forks) == 0)
 		{
-			            //check if we need to shut down
             sem_wait(philo->g_data->terminate);
             if (philo->g_data->term == 1)
             {
                 sem_post(philo->g_data->terminate);
-                return (NULL);
+				printf("philo %d returning from routine\n", philo->id);
+                return (0);
             }
             sem_post(philo->g_data->terminate);
 
 			if (philo->g_data->phil_amount == 1)
 			{
 				print_status(philo, S_FORK);
+				printf("philo %d returning from routine\n", philo->id);
+
 				return (0);
 			}
 			if (sem_wait(philo->g_data->forks) == 0)
@@ -108,11 +136,12 @@ void	*routine(void *arg)
 			}
 			else
 			{
-				printf("putting fork back\n");
 				sem_post(philo->g_data->forks);
 				ft_usleep(10);
 			}
 		}
 	}
+	printf("philo %d returning from routine because enouth servings\n", philo->id);
+
 	return (0);
 }

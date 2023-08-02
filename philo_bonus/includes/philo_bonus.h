@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/01 23:24:49 by facu             ###   ########.fr       */
+/*   Updated: 2023/08/02 16:08:48 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,11 @@ typedef struct s_philo
 	int						pid;
 	long					last_serving_t;
 	pthread_t				monitoring;
+	pthread_t				shotdown;
 	pthread_t				lifecycle;
 	sem_t					*lock;
 	struct s_global_data	*g_data;
+	int						is_eating;
 }	t_philo;
 
 typedef struct s_global_data
@@ -63,7 +65,9 @@ typedef struct s_global_data
 	int						servings;
 	sem_t					*printf_sem;
 	sem_t					*forks;
+	sem_t					*shotdown;
 	sem_t					*terminate;
+	sem_t					*total_servings;
 	int						term;
 	t_philo					*philosophers;
 	long					start_time;
@@ -74,6 +78,8 @@ int		check_limits(t_global_data *data);
 void	check_argc(int argc);
 int		check_is_dead(long timestamp, t_philo *philo);
 int		check_servings(t_philo *philo);
+int		check_term(t_philo *philo);
+
 
 /* debug.c */
 void	print_results(t_global_data *global_data);
@@ -96,6 +102,7 @@ void	leave_forks(t_philo *philo);
 void	nap(t_philo *philo);
 
 /* utils.c */
+void	*monitor_shoutdown(void *arg);
 void	print_status(t_philo *philo, char *status);
 long	get_time(void);
 void	*monitor_starvation(void *arg);

@@ -6,7 +6,7 @@
 /*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:05:03 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/28 13:33:23 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 16:46:06 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,24 @@ int	check_is_dead(long timestamp, t_philo *philo)
 	int	ret;
 
 	sem_wait(philo->lock);
+	if (philo->is_eating)
+	{
+		sem_post(philo->lock);
+		return (0);
+	}
 	ret = timestamp - philo->last_serving_t > philo->g_data->die_t;
 	sem_post(philo->lock);
+	return (ret);
+}
+
+int check_term(t_philo *philo)
+{
+	int	ret;
+
+	sem_wait(philo->g_data->terminate);
+	ret = philo->g_data->term;
+	printf("philo %d term: %d\n", philo->id, ret);
+	sem_post(philo->g_data->terminate);
 	return (ret);
 }
 
