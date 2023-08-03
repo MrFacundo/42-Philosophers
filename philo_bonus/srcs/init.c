@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:08:05 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 16:17:14 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 19:15:45 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	initialize_global_data(t_global_data *data, char **argv)
 	sem_unlink("lock");
 	sem_unlink("terminate");
 	sem_unlink("shotdown");
+	sem_unlink("total_servings");
 	data->term = 0;
 	data->terminate = sem_open("terminate", O_CREAT, S_IRWXU, 1);
 	data->forks = sem_open("forks", O_CREAT, S_IRWXU, data->phil_amount);

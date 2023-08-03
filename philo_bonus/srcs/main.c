@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:48 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 16:56:38 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 19:39:30 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,27 +63,29 @@ int	helper(t_global_data *data)
 	i = -1;
 	while (++i < data->phil_amount)
 	{
-		init_philo(data, i);
 		ph = &data->philosophers[i];
 		ph->pid = fork();
 		if (!ph->pid)
 		{
+			init_philo(data, i);
 			if (pthread_create(&ph->lifecycle, 0, routine, ph)
 			|| pthread_create(&ph->monitoring, 0, monitor_starvation, ph)
-			|| pthread_create(&ph->shotdown, 0, monitor_shoutdown, data)
+			|| pthread_create(&ph->shotdown, 0, monitor_shotdown, data)
 			|| pthread_join(ph->lifecycle, 0)
 			|| pthread_join(ph->monitoring, 0)
 			|| pthread_join(ph->shotdown, 0)
 			)
 				return (1);
 			sem_close(ph->lock);
-//			sem_close(data->terminate);
-//			sem_close(data->forks);
-//			sem_close(data->shotdown);
-//			sem_close(data->printf_sem);
+			sem_close(data->terminate);
+			sem_close(data->forks);
+			sem_close(data->shotdown);
+			sem_close(data->printf_sem);
+			sem_close(data->total_servings);
+
 			
-			// free(data->philosophers);
-			return (0);
+			free(data->philosophers);
+			exit (0);
 		}
 		else if (ph->pid < 0)
 			return (1);
@@ -100,10 +102,11 @@ int	main(int argc, char **argv)
 	initialize_global_data(&global_data, argv);
 	if (helper(&global_data))
 		exit_routine(&global_data, E_THREAD);
-	sem_close(global_data.printf_sem);
-	sem_close(global_data.forks);
 	sem_close(global_data.terminate);
+	sem_close(global_data.forks);
 	sem_close(global_data.shotdown);
+	sem_close(global_data.printf_sem);
+	sem_close(global_data.total_servings);
 	sem_unlink("printf_sem");
 	sem_unlink("forks");
 	sem_unlink("lock");

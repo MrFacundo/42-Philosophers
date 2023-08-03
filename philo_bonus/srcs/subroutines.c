@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   subroutines.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 13:44:03 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 11:35:17 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 19:33:23 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,10 @@ void	eat(t_philo *philo)
 {
 	print_status(philo, S_FORK);
 	print_status(philo, S_FORK);
-	print_status(philo, S_EAT);
 	sem_wait(philo->lock);
 	philo->is_eating = 1;
 	sem_post(philo->lock);
+	print_status(philo, S_EAT);
 	ft_usleep(philo->g_data->eat_t * 1000);
 }
 

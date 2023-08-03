@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:05:03 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 16:46:06 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 19:57:57 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int check_term(t_philo *philo)
 
 	sem_wait(philo->g_data->terminate);
 	ret = philo->g_data->term;
-	printf("philo %d term: %d\n", philo->id, ret);
+	// printf("philo %d term: %d\n", philo->id, ret);
 	sem_post(philo->g_data->terminate);
 	return (ret);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 16:08:48 by facundo          ###   ########.fr       */
+/*   Updated: 2023/08/02 19:30:43 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	leave_forks(t_philo *philo);
 void	nap(t_philo *philo);
 
 /* utils.c */
-void	*monitor_shoutdown(void *arg);
+void	*monitor_shotdown(void *arg);
 void	print_status(t_philo *philo, char *status);
 long	get_time(void);
 void	*monitor_starvation(void *arg);
