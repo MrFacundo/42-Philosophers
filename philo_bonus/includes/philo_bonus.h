@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 19:30:43 by facu             ###   ########.fr       */
+/*   Updated: 2023/08/03 12:00:47 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,9 @@ typedef struct s_philo
 	int						id;
 	int						pid;
 	long					last_serving_t;
-	pthread_t				monitoring;
-	pthread_t				shotdown;
-	pthread_t				lifecycle;
+	pthread_t				monitor_feeding;
+	pthread_t				monitor_shotdown;
+	pthread_t				routine;
 	sem_t					*lock;
 	struct s_global_data	*g_data;
 	int						is_eating;
@@ -63,23 +63,22 @@ typedef struct s_global_data
 	int						eat_t;
 	int						sleep_t;
 	int						servings;
-	sem_t					*printf_sem;
+	sem_t					*printf_lock;
 	sem_t					*forks;
 	sem_t					*shotdown;
-	sem_t					*terminate;
 	sem_t					*total_servings;
+	sem_t					*term_lock;
 	int						term;
 	t_philo					*philosophers;
 	long					start_time;
 }	t_global_data;
 
 /* checks.c */
-int		check_limits(t_global_data *data);
+int		check_argv(t_global_data *data);
 void	check_argc(int argc);
 int		check_is_dead(long timestamp, t_philo *philo);
 int		check_servings(t_philo *philo);
 int		check_term(t_philo *philo);
-
 
 /* debug.c */
 void	print_results(t_global_data *global_data);
@@ -101,11 +100,13 @@ void	eat(t_philo *philo);
 void	leave_forks(t_philo *philo);
 void	nap(t_philo *philo);
 
-/* utils.c */
+/* threads.c */
 void	*monitor_shotdown(void *arg);
-void	print_status(t_philo *philo, char *status);
-long	get_time(void);
 void	*monitor_starvation(void *arg);
 void	*routine(void *arg);
+
+/* utils.c */
+void	print_status(t_philo *philo, char *status);
+long	get_time(void);
 
 #endif

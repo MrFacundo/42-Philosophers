@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:05:03 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/02 19:57:57 by facu             ###   ########.fr       */
+/*   Updated: 2023/08/03 11:58:52 by facundo          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo_bonus.h"
 
-int	check_limits(t_global_data *data)
+int	check_argv(t_global_data *data)
 {
 	if (data->phil_amount < MIN_PHIL_AMOUNT
 		|| data->phil_amount > MAX_PHIL_AMOUNT
@@ -51,10 +51,9 @@ int check_term(t_philo *philo)
 {
 	int	ret;
 
-	sem_wait(philo->g_data->terminate);
+	sem_wait(philo->g_data->term_lock);
 	ret = philo->g_data->term;
-	// printf("philo %d term: %d\n", philo->id, ret);
-	sem_post(philo->g_data->terminate);
+	sem_post(philo->g_data->term_lock);
 	return (ret);
 }
 
