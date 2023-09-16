@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   subroutines.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ftroiter <ftroiter@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:28:30 by facundo           #+#    #+#             */
-/*   Updated: 2023/09/16 14:07:26 by facu             ###   ########.fr       */
+/*   Updated: 2023/09/16 16:39:47 by ftroiter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	leave_forks(t_philosopher *ph,
 }
 
 void	nap(t_philosopher *ph)
-{	
+{
 	if (check_servings(ph))
 		return ;
 	print_status(ph, S_SLEEP);

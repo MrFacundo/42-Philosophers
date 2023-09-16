@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ftroiter <ftroiter@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 11:59:26 by facundo           #+#    #+#             */
-/*   Updated: 2023/09/16 16:13:51 by facu             ###   ########.fr       */
+/*   Updated: 2023/09/16 16:32:30 by ftroiter         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,53 +88,48 @@ void	*monitor_starvation(void *arg)
 // 	return (0);
 // }
 
-int try_pickup_forks(t_philo *philo) {
-    if (sem_wait(philo->g_data->forks) != 0) {
-        return 0;
-    }
-    
-    t_global_data *g_data = philo->g_data;
+int	try_pickup_forks(t_philo *philo)
+{
+	t_global_data	*g_data;
 
-    if (sem_wait(g_data->term_lock) != 0) {
-        sem_post(g_data->forks);
-        return 0;
-    }
-
-    if (g_data->term == 1) {
-        sem_post(g_data->term_lock);
-        sem_post(g_data->forks);
-        return 0;
-    }
-
-    sem_post(g_data->term_lock);
-
-    if (g_data->phil_amount == 1) {
-        print_status(philo, S_FORK);
-        sem_post(g_data->forks);
-        return 0;
-    }
-
-    if (sem_wait(g_data->forks) != 0) {
-        sem_post(g_data->forks);
-        return 0;
-    }
-
-    return 1;
+	g_data = philo->g_data;
+	if (sem_wait(philo->g_data->forks) != 0)
+		return (0);
+	if (check_term(philo))
+	{
+		sem_post(philo->g_data->forks);
+		return (0);
+	}
+	if (g_data->phil_amount == 1)
+	{
+		print_status(philo, S_FORK);
+		sem_post(g_data->forks);
+		return (0);
+	}
+	if (sem_wait(g_data->forks) != 0)
+	{
+		sem_post(g_data->forks);
+		return (0);
+	}
+	return (1);
 }
 
-void *routine(void *arg) {
-    t_philo *philo = (t_philo *)arg;
+void	*routine(void *arg)
+{
+	t_philo	*philo;
 
-    while (philo->g_data->servings) {
-        print_status(philo, S_THINK);
-        if (try_pickup_forks(philo)) {
-            eat(philo);
-            leave_forks(philo);
-            nap(philo);
-        } else {
-            ft_usleep(10);
-        }
-    }
-
-    return (NULL);
+	philo = (t_philo *)arg;
+	while (philo->g_data->servings && !check_term(philo))
+	{
+		print_status(philo, S_THINK);
+		if (try_pickup_forks(philo))
+		{
+			eat(philo);
+			leave_forks(philo);
+			nap(philo);
+		}
+		else
+			ft_usleep(10);
+	}
+	return (0);
 }
