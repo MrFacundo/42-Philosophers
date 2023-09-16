@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/02 09:12:24 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/28 14:13:14 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 14:34:56 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	*monitor_starvation(void *arg)
 	ft_usleep(data->die_t);
 	while (!check_someone_died(data) && total_servings)
 	{
-		ft_usleep(5);
 		i = -1;
 		while (++i < data->phil_amount && !check_someone_died(data))
 		{
@@ -65,6 +64,7 @@ void	assign_forks(t_philosopher *ph,
 		*right_fork = ph->right_fork;
 	}
 }
+
 /*so that the boys can think, eat and sleep*/
 void	*routine(void *arg)
 {

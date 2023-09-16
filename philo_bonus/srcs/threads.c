@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   threads.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/03 11:59:26 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/03 12:05:04 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 16:13:51 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	*monitor_shotdown(void *arg)
 	data->term = 1;
 	sem_post(data->term_lock);
 	sem_post(data->shotdown);
-	//printf("returning from monitor shotdown\n");
 	return (0);
 }
 
@@ -35,66 +34,107 @@ void	*monitor_starvation(void *arg)
 	philo = (t_philo *)arg;
 	while (check_servings(philo))
 	{
-		ft_usleep(5);
 		ts = get_time();
 		if (check_is_dead(ts, philo))
 		{
 			if (!check_term(philo))
-            {
-				//printf("philo %d died\n", philo->id);
+			{
 				print_status(philo, S_DIED);
 				sem_post(philo->g_data->shotdown);
 				i = 0;
 				while (i++ <= philo->g_data->phil_amount)
 					sem_post(philo->g_data->total_servings);
 			}
-			//printf("ph %d returning from monitor starvation\n", philo->id);
 			return (0);
 		}
 	}
 	sem_post(philo->g_data->total_servings);
-	//printf("ph %d returning from monitor starvation because servings are enough\n", philo->id);
 	return (0);
 }
 
-void	*routine(void *arg)	
-{
-	t_philo	*philo;
+// void	*routine(void *arg)
+// {
+// 	t_philo	*philo;
 
-	philo = (t_philo *)arg;
-	while (philo->g_data->servings)
-	{
-		print_status(philo, S_THINK);
-		if (sem_wait(philo->g_data->forks) == 0)
-		{
-            sem_wait(philo->g_data->term_lock);
-            if (philo->g_data->term == 1)
-            {
-                sem_post(philo->g_data->term_lock);
-				//printf("philo %d returning from routine 1\n", philo->id);
-                return (0);
-            }
-            sem_post(philo->g_data->term_lock);
+// 	philo = (t_philo *)arg;
+// 	while (philo->g_data->servings)
+// 	{
+// 		print_status(philo, S_THINK);
+// 		if (sem_wait(philo->g_data->forks) == 0)
+// 		{
+// 			if (check_term(philo))
+// 			{
+// 				sem_post(philo->g_data->forks);
+// 				return (0);
+// 			}
+// 			if (philo->g_data->phil_amount == 1)
+// 			{
+// 				print_status(philo, S_FORK);
+// 				return (0);
+// 			}
+// 			if (sem_wait(philo->g_data->forks) == 0)
+// 			{
+// 				eat(philo);
+// 				leave_forks(philo);
+// 				nap(philo);
+// 			}
+// 			else
+// 			{
+// 				sem_post(philo->g_data->forks);
+// 				ft_usleep(10);
+// 			}
+// 		}
+// 	}
+// 	return (0);
+// }
 
-			if (philo->g_data->phil_amount == 1)
-			{
-				print_status(philo, S_FORK);
-				//printf("philo %d returning from routine 2\n", philo->id);
-				return (0);
-			}
-			if (sem_wait(philo->g_data->forks) == 0)
-			{
-				eat(philo);
-				leave_forks(philo);
-				nap(philo);
-			}
-			else
-			{
-				sem_post(philo->g_data->forks);
-				ft_usleep(10);
-			}
-		}
-	}
-	//printf("ph %d returning from routine because servings are enough\n", philo->id);
-	return (0);
+int try_pickup_forks(t_philo *philo) {
+    if (sem_wait(philo->g_data->forks) != 0) {
+        return 0;
+    }
+    
+    t_global_data *g_data = philo->g_data;
+
+    if (sem_wait(g_data->term_lock) != 0) {
+        sem_post(g_data->forks);
+        return 0;
+    }
+
+    if (g_data->term == 1) {
+        sem_post(g_data->term_lock);
+        sem_post(g_data->forks);
+        return 0;
+    }
+
+    sem_post(g_data->term_lock);
+
+    if (g_data->phil_amount == 1) {
+        print_status(philo, S_FORK);
+        sem_post(g_data->forks);
+        return 0;
+    }
+
+    if (sem_wait(g_data->forks) != 0) {
+        sem_post(g_data->forks);
+        return 0;
+    }
+
+    return 1;
+}
+
+void *routine(void *arg) {
+    t_philo *philo = (t_philo *)arg;
+
+    while (philo->g_data->servings) {
+        print_status(philo, S_THINK);
+        if (try_pickup_forks(philo)) {
+            eat(philo);
+            leave_forks(philo);
+            nap(philo);
+        } else {
+            ft_usleep(10);
+        }
+    }
+
+    return (NULL);
 }

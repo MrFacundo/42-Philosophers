@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:05:03 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/03 11:58:52 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 12:46:28 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	check_is_dead(long timestamp, t_philo *philo)
 	return (ret);
 }
 
-int check_term(t_philo *philo)
+int	check_term(t_philo *philo)
 {
 	int	ret;
 

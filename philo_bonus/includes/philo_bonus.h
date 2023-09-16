@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/27 12:12:01 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/03 12:00:47 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 15:32:33 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,7 @@ int		check_term(t_philo *philo);
 void	print_results(t_global_data *global_data);
 
 /* init.c */
+void	init_philo(t_global_data *data, int i);
 void	initialize_global_data(t_global_data *data, char **argv);
 
 /* libft_utils.c */
@@ -93,7 +94,6 @@ int		ft_strncmp(char *str_1, char *str_2, int n);
 void	ft_usleep(unsigned int n);
 
 /* main.c */
-void	exit_routine(t_global_data *global_data, char *msg);
 
 /* subroutines.c */
 void	eat(t_philo *philo);
@@ -108,5 +108,8 @@ void	*routine(void *arg);
 /* utils.c */
 void	print_status(t_philo *philo, char *status);
 long	get_time(void);
+void	exit_routine(t_global_data *global_data, char *msg);
+void	close_semaphores(t_global_data *data);
+void	close_child_process(t_philo *ph);
 
 #endif

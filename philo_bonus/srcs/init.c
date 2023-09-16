@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 12:08:05 by facundo           #+#    #+#             */
-/*   Updated: 2023/08/03 11:15:24 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 15:29:20 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,15 @@ void	open_semaphores(t_global_data *data)
 	data->shotdown = sem_open("shotdown", O_CREAT, S_IRWXU, 0);
 	data->printf_lock = sem_open("printf_lock", O_CREAT, S_IRWXU, 1);
 	data->total_servings = sem_open("total_servings", O_CREAT, S_IRWXU, 0);
+}
+
+void	init_philo(t_global_data *data, int i)
+{
+	data->philosophers[i].id = i + 1;
+	data->philosophers[i].last_serving_t = get_time();
+	data->philosophers[i].g_data = data;
+	data->philosophers[i].lock = sem_open("lock", O_CREAT, S_IRWXU, 1);
+	data->philosophers[i].is_eating = 0;
 }
 
 void	initialize_global_data(t_global_data *data, char **argv)
@@ -47,5 +56,8 @@ void	initialize_global_data(t_global_data *data, char **argv)
 		|| data->total_servings == SEM_FAILED)
 		exit_routine(data, E_SEM);
 	if (check_argv(data))
+	{
+		close_semaphores(data);
 		exit_routine(data, E_ARGS);
+	}
 }

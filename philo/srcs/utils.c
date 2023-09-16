@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: facundo <facundo@student.42.fr>            +#+  +:+       +#+        */
+/*   By: facu <facu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/12 14:14:44 by facundo           #+#    #+#             */
-/*   Updated: 2023/07/12 15:40:15 by facundo          ###   ########.fr       */
+/*   Updated: 2023/09/16 14:04:57 by facu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ long	get_time(void)
 	return (timestamp);
 }
 
-int		free_all(t_global_data *global_data, char *msg)
+int	free_all(t_global_data *global_data, char *msg)
 {
 	if (global_data->philosophers)
 		free(global_data->philosophers);
